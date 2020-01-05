@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head"></head>
+<body>
+	<!--Panel-->
+
+	<nav th:replace="persona/navbar :: panel"></nav>
+	<div class="container-fluid" id="css-contenido">
+
+		<div class="card border-dark bg-light" id="card-inicio">
+			<div class="card-header text-white">
+				<div class="d-flex">
+					<div class="mt-2 mb-2" id="card-titulo" th:text="${form}"></div>
+				</div>
+			</div>
+			<div class="card-body">
+				<div class="card my-2">
+					<div class="card-body">
+						<table class="table table-bordered" id="tbpersona"
+							style="width: 100%">
+							<thead>
+								<tr>
+									<td>Numero Proceso Embargo</td>
+									<td>Fecha Oficio Embargo</td>
+									<td>Nombre Autoridad</td>
+									<td>Direccion de la Autoridad</td>
+									<td>Departamento de la Autoridad</td>
+									<td>Ciudad de la Autoridad</td>
+								</tr>
+							</thead>
+							<tbody th:each="embargo : ${bdEmbargos}">
+								<tr th:each="autoridad : ${bdAutoridades}"
+									th:if="${embargo.idAutoridad == autoridad.idAutoridad}">
+
+									<td class="text-uppercase" th:text="${embargo.numProceso}"></td>
+									<td class="text-uppercase" th:text="${embargo.fechaOficio}"></td>
+									<td class="text-uppercase" th:text="${autoridad.nombre}"></td>
+									<td class="text-uppercase" th:text="${autoridad.direccion}" /></td>
+									<td class="text-uppercase" th:text="${autoridad.departamento}"></td>
+									<td class="text-uppercase" th:text="${autoridad.ciudad}" /></td>
+								</tr>
+
+							</tbody>
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer th:replace="layout :: footer"></footer>
+</body>
+</html>
+
+<!-- 
+
+ -->

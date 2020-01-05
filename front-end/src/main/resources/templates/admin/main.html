@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head">
+<meta charset="UTF-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+	<!--Panel-->
+
+	<form action="#" th:action="@{/admin/app/form}" method="post">
+		<nav th:replace="admin/navbar :: panel"></nav>
+		<div class="container-fluid" id="css-contenido" th:fragment="main">
+			<div th:replace="layout :: alerts"></div>
+			<div class="card border-dark bg-light" id="card-inicio">
+
+				<div class="card-header text-white">
+					<div class="d-flex">
+						<div class="mt-2 mb-2" id="card-titulo" th:text="${form}"></div>
+					</div>
+				</div>
+				<div class="card-body">
+
+					<div class="form-row">
+						<div class="col-md-4">
+							<label for="idAutoridad">Identificacion</label>
+							<th:block th:if="${boton} eq 'all'">
+								<input type="text" name="idAutoridad"
+									th:field="*{autoridad.idAutoridad}"
+									class="form-control text-uppercase" />
+							</th:block>
+							<th:block
+								th:if="${boton} eq 'onactualizar' or ${boton} eq 'inactualizar'">
+								<input type="text" name="idAutoridad"
+									th:field="*{autoridad.idAutoridad}"
+									class="form-control text-uppercase" readonly />
+							</th:block>
+
+							<!-- <p th:if="${#fields.hasErrors('idAutoridad')}" th:errors="*{idAutoridad}"
+							class="alert alert-danger p-0"></p> -->
+						</div>
+
+						<div class="col-md-4">
+							<label for="nombre">Nombre</label> <input type="text"
+								name="nombre" th:field="*{autoridad.nombre}"
+								class="form-control text-uppercase" />
+						</div>
+						<div class="col-md-4">
+							<label for="tipoAutoridad">Tipo</label> <select
+								th:field="*{autoridad.tipoAutoridad}" name="tipoAutoridad"
+								class="form-control">
+								<option th:value="${tipoAutoridad}" th:text="${tipoAutoridad}"
+									selected></option>
+								<option
+									th:each="tipoAutoridad : ${T(enumeraciones.TipoAutoridad).values()}"
+									th:text="${tipoAutoridad}" th:value="${tipoAutoridad}"></option>
+							</select>
+						</div>
+
+					</div>
+					<div class="form-row">
+						<div class="col-md-4">
+							<label for="direccion">Direccion</label> <input type="text"
+								name="direccion" th:field="*{autoridad.direccion}"
+								class="form-control text-uppercase" />
+						</div>
+						<div class="col-md-4">
+							<label for="departamento">Departamento</label> <select
+								class="form-control" th:field="*{autoridad.departamento}"
+								name="departamento">
+								<option th:value="${departamento}" th:text="${departamento}"
+									selected></option>
+								<option
+									th:each="departamento : ${T(enumeraciones.Departamento).values()}"
+									th:text="${departamento}" th:value="${departamento}"></option>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label for="ciudad">Ciudad</label> <select class="form-control"
+								th:field="*{autoridad.ciudad}" name="ciudad">
+								<option th:value="${ciudad}" th:text="${ciudad}" selected></option>
+								<option th:each="ciudad : ${T(enumeraciones.Ciudad).values()}"
+									th:value="${ciudad}" th:text="${ciudad}"></option>
+							</select>
+						</div>
+
+					</div>
+					<div class="form-row">
+						<th:block
+							th:if="${boton} eq 'onactualizar' or ${boton} eq 'inactualizar'">
+							<div class="col-md-4">
+								<label>Estado</label> <select class="form-control"
+									th:field="*{autoridad.habilitado}" name="roles">
+									<option th:value="true">Habilitar</option>
+									<option th:value="false">Deshabilitar</option>
+								</select>
+							</div>
+					</div>
+
+					<div class="card my-2">
+						<div class="card-body">
+							<div class="mb-2">
+								<th:block th:switch="${boton}">
+									<th:block th:case="all">
+										<button type="submit" name="action" value="agregar"
+											class="btnvalidate btn btn-secondary btn-sm">Agregar
+											Usuario</button>
+									</th:block>
+									<th:block th:case="inactualizar">
+										<button type="submit" name="action" value="inactualizar"
+											class="btnvalidate btn btn-secondary btn-sm">Agregar
+											Usuario</button>
+									</th:block>
+									<th:block
+										th:if="${boton} eq 'onactualizar' or ${boton} eq 'adactualizar'">
+										<button type="submit" name="action" value="onagregar"
+											class="btnvalidate btn btn-secondary btn-sm">Agregar
+											Usuario</button>
+									</th:block>
+							</div>
+
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<td style="width: 13%">Identificacion</td>
+										<td style="width: 12%">Tipo Identificacion</td>
+										<td style="width: 15%">Nombres</td>
+										<td style="width: 15%">Apellidos</td>
+										<td style="width: 15%">Nombre Usuario</td>
+										<td style="width: 15%">Contraseña</td>
+										<td style="width: 15%">Confirmar Contraseña</td>
+
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="usuario, item : *{autoridad.usuarios}">
+
+										<td>
+											<th:block
+												th:if="*{!#strings.isEmpty(autoridad.usuarios[__${item.index}__].identificacion)}">
+												<input name="identificacion" type="text"
+													class="form-control text-uppercase"
+													th:field="*{autoridad.usuarios[__${item.index}__].identificacion}"
+													readonly/>
+											</th:block>
+												<th:block
+												th:if="*{#strings.isEmpty(autoridad.usuarios[__${item.index}__].identificacion)}">
+												<input name="identificacion" type="text"
+													class="form-control text-uppercase"
+													th:field="*{autoridad.usuarios[__${item.index}__].identificacion}" />
+											</th:block>
+										</td>
+										<td><select class="form-control text-uppercase"
+											th:field="*{autoridad.usuarios[__${item.index}__].tipoIdentificacion}"
+											name="tipoIdentificacion">
+												<option
+													th:value="*{autoridad.usuarios[__${item.index}__].tipoIdentificacion}"
+													selected></option>
+												<option
+													th:each="tipoIdentificacion : ${T(enumeraciones.TipoIdentificacion).values()}"
+													th:value="${tipoIdentificacion}"
+													th:text="${tipoIdentificacion}"></option>
+										</select></td>
+
+										<td><input name="nombres" type="text"
+											class="form-control text-uppercase"
+											th:field="*{autoridad.usuarios[__${item.index}__].nombres}" /></td>
+										<td><input name="apellidos" type="text"
+											class="form-control text-uppercase"
+											th:field="*{autoridad.usuarios[__${item.index}__].apellidos}" /></td>
+										
+										<td>
+										<th:block
+												th:if="*{!#strings.isEmpty(autoridad.usuarios[__${item.index}__].username)}">
+											<input name="username" type="text"
+											class="form-control text-uppercase"
+											th:field="*{autoridad.usuarios[__${item.index}__].username}" readonly/>
+											</th:block>
+											<th:block
+												th:if="*{#strings.isEmpty(autoridad.usuarios[__${item.index}__].username)}">
+											<input name="username" type="text"
+											class="form-control text-uppercase"
+											th:field="*{autoridad.usuarios[__${item.index}__].username}" />
+											</th:block>
+										</td>
+										<td><input type="password" name="password" id="password"
+											th:name="|usuarios[${item.index}].password|"
+											th:value="${usuario.getPassword()}"
+											class="form-control text-uppercase" /></td>
+										<td><input type="password" id="confirmPassword"
+											name="confirmPassword"
+											th:name="|usuarios[${item.index}].confirmPassword|"
+											th:value="${usuario.getConfirmPassword()}"
+											class="form-control text-uppercase" /></td>
+									</tr>
+								</tbody>
+							</table>
+							</th:block>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<footer th:replace="layout :: footer"></footer>
+</body>
+</html>

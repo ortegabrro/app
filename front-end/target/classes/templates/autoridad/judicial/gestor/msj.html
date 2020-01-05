@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head"></head>
+<body>
+	<!--Panel  -->
+	<nav th:replace="autoridad/judicial/gestor/navbar :: panel"></nav>
+	<div class="container-fluid" id="css-contenido">
+
+		<div class="modal fade" id="exampleModalScrollable" tabindex="-1"
+			role="dialog" aria-labelledby="exampleModalScrollableTitle"
+			aria-hidden="true" th:fragment="modalResult" data-backdrop="static"
+			data-keyboard="false">
+			<div class="modal-dialog modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalScrollableTitle"
+							th:text="${form}"></h5>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<textarea rows="20" style="min-width: 100%; resize: none;"
+							th:text="${mensajePasarela + ' ' + mensaje}" readonly></textarea>
+					</div>
+					<div class="modal-footer">
+						<form action="#"
+							th:action="@{'/autoridad/judicial/gestor/msj/'+${boton}}"
+							th:object="${embargo}" method="post">
+							<input type="hidden" th:field="*{idEmbargo}" />
+							<input type="hidden" th:field="*{idAutoridad}" /> 
+							<input type="hidden" th:field="*{numProceso}" /> 
+							<input type="hidden" th:field="*{numOficio}" /> 
+							<input type="hidden" th:field="*{fechaOficio}" /> 
+							<input type="hidden" th:field="*{tipoEmbargo}" /> 
+							<input type="hidden" th:field="*{montoAEmbargar}" />
+							<input type="hidden" th:field="*{numCuentaAgrario}" />
+							<table style="display:none;">
+								<tr th:each="demandante, item : *{demandantes}">
+									<td><input name="identificacion" type="text"
+										class="form-control text-uppercase"
+										th:field="*{demandantes[__${item.index}__].identificacion}" />
+									</td>
+									<td><select class="form-control text-uppercase"
+										th:field="*{demandantes[__${item.index}__].tipoIdentificacion}">
+											<option
+												th:each="tipoIdentificacion : 
+											    		${T(enumeraciones.TipoIdentificacion).values()}"
+												th:value="${tipoIdentificacion}"
+												th:text="${tipoIdentificacion}"></option>
+									</select></td>
+									<td><input name="nombres" type="text"
+										class="form-control text-uppercase"
+										th:field="*{demandantes[__${item.index}__].nombres}" /></td>
+									<td><input name="apellidos" type="text"
+										class="form-control text-uppercase"
+										th:field="*{demandantes[__${item.index}__].apellidos}" /></td>
+								</tr>
+							</table>
+							<table style="display:none;">
+								<tr th:each="demandado, item : *{demandados}">
+										<td><input name="identificacion" type="text"
+											class="form-control text-uppercase"
+											th:field="*{demandados[__${item.index}__].identificacion}" />
+										</td>
+										<td><select class="form-control text-uppercase"
+											th:field="*{demandados[__${item.index}__].tipoIdentificacion}">
+												<option
+													th:each="tipoIdentificacion : 
+											    		${T(enumeraciones.TipoIdentificacion).values()}"
+													th:value="${tipoIdentificacion}"
+													th:text="${tipoIdentificacion}"></option>
+										</select></td>
+										<td><input name="nombres" type="text"
+											class="form-control text-uppercase"
+											th:field="*{demandados[__${item.index}__].nombres}" /></td>
+										<td><input name="apellidos" type="text"
+											class="form-control text-uppercase"
+											th:field="*{demandados[__${item.index}__].apellidos}" /></td>
+										<td><input name="montoAEmbargar" type="text"
+											class="form-control text-uppercase"
+											th:field="*{demandados[__${item.index}__].montoAEmbargar}" />
+										</td>
+									</tr>
+							</table>
+							<button class="btn btn-primary" type="submit">Aceptar</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer th:replace="layout :: footer"></footer>
+</body>
+</html>
+

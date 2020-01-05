@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head">
+<meta charset="UTF-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+	<!--Panel-->
+
+	<form action="#" th:action="@{/admin/autoridad/form}" method="post"
+		>
+		<nav th:replace="autoridad/admin/navbar :: panel"></nav>
+		<div class="container-fluid" id="css-contenido">
+			<div th:replace="layout :: alerts"></div>
+			<div class="card border-dark bg-light" id="card-inicio">
+
+				<div class="card-header text-white">
+					<div class="d-flex">
+						<div class="mt-2 mb-2" id="card-titulo" th:text="${form}"></div>
+					</div>
+				</div>
+				<div class="card-body">
+
+					<div class="form-row">
+						<div class="col-md-4">
+							<label for="identificacion">Identificacion</label> <input
+								type="text" name="identificacion" th:field="*{usuario.identificacion}"
+								class="form-control text-uppercase" autofocus />
+						</div>
+						<div class="col-md-4">
+							<label for="tipoIdentificacion">Tipo Identificacion</label> <select
+								class="form-control" name="tipoIdentificacion"
+								th:field="*{usuario.tipoIdentificacion}">
+								<option th:value="${usuario.tipoIdentificacion}"
+									th:text="${usuario.tipoIdentificacion}" selected></option>
+								<option
+									th:each="tipoIdentificacion : ${T(enumeraciones.TipoIdentificacion).values()}"
+									th:value="${tipoIdentificacion}"
+									th:text="${tipoIdentificacion}"></option>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label for="nombres">Nombres</label> <input type="text"
+								name="nombres" id="nombres" class="form-control text-uppercase"
+								th:field="*{usuario.nombres}" />
+						</div>
+
+					</div>
+					<div class="form-row">
+
+						<div class="col-md-4">
+							<label for="apellidos">Apellidos</label> <input type="text"
+								name="apellidos" id="apellidos"
+								class="form-control text-uppercase" th:field="*{usuario.apellidos}" />
+						</div>
+
+						<div class="col-md-4">
+							<label for="username">Nombre de Usuario</label> <input
+								type="text" name="username" id="username"
+								class="form-control text-uppercase" th:field="*{usuario.username}" />
+						</div>
+
+						<div class="col-md-4">
+							<label for="roles">Rol Usuario</label> <select
+								class="form-control" th:field="*{usuario.roles}" name="roles">
+								<option th:each="cont : ${lst}" th:text="${cont}"
+									th:value="${cont}"></option>
+							</select>
+						</div>
+
+					</div>
+					<div class="form-row mb-3">
+						<th:block th:switch="${boton}">
+							<th:block th:case="onactualizar">
+								<div class="col-md-4">
+									<label>Estado</label> <select class="form-control"
+										th:field="*{usuario.habilitado}" name="roles">
+										<option th:value="true">Habilitar</option>
+										<option th:value="false">Deshabilitar</option>
+									</select>
+								</div>
+							</th:block>
+							<div class="col-md-4">
+								<label for="password">Contraseña Usuario</label> 
+									<input type="password" name="password" id="password"
+											
+											th:value="${usuario.getPassword()}"
+											class="form-control text-uppercase" />
+							</div>
+							<div class="col-md-4">
+								<label for="confirmPassword">Confirmar Contraseña
+									Usuario</label>
+									<input type="password" id="confirmPassword"
+											name="confirmPassword"
+											
+											th:value="${usuario.getConfirmPassword()}"
+											class="form-control text-uppercase" />
+							</div>
+
+						</th:block>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<footer th:replace="layout :: footer"></footer>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout:: head"></head>
+<body>
+	<!--<div th:fragment="fg-consultar">
+		Panel-->
+	<nav th:replace="autoridad/judicial/navbar :: panel"></nav>
+
+	<div class="container-fluid" id="css-contenido">
+		<div class="card border-dark bg-light" id="card-inicio">
+			<div class="card-header text-white">
+				<div class="d-flex">
+					<div class="mt-2 mb-2" id="card-titulo" th:text="${form}"></div>
+					<div class="ml-auto" id="pagin">
+
+						<ul class="pagination" id="pag-card">
+							<li class="prev page-item "><a class="page-link" href="#">Anterior</a></li>
+							<li class="next page-item"><a class="next page-link"
+								href="#">Siguiente</a></li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="content" th:each="embargo : ${embargos}">
+				<div class="card-body">
+					<div class="form-row">
+						<div class="col-md-4">
+							<label>Numero Proceso</label> <input type="text"
+								class="form-control text-uppercase"
+								th:value="${embargo.numProceso}">
+						</div>
+						<div class="col-md-4">
+							<label>Numero Oficio</label> <input type="text"
+								class="form-control text-uppercase"
+								th:value="${embargo.numOficio}">
+						</div>
+						<div class="col-md-4">
+							<label for="fechaOficio">Fecha Oficio</label>
+							<div class="input-group date" data-provide="datepicker">
+								<input type="text" class="form-control" id="fechaOficio"
+									th:value="${embargo.fechaOficio}" readonly>
+								<div class="input-group-addon">
+									<span class="glyphicon glyphicon-th"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="col-md-4">
+							<label for="tipoEmbargo">Tipo Embargo</label><input
+								type="text" class="form-control"
+								th:value="${embargo.tipoEmbargo}">
+						</div>
+						<div class="col-md-4">
+							<label for="montoEmbargar">Monto a Embargar</label> <input
+								type="text" class="form-control" id="montoEmbargar"
+								th:value="${embargo.montoAEmbargar}">
+						</div>
+						<div class="col-md-4">
+							<label for="numCuenta">Numero Cuenta Banco Agrario</label> <input
+								type="text" class="form-control" id="numOficio"
+								th:value="${embargo.numCuentaAgrario}">
+						</div>
+					</div>
+
+
+					<div class="card my-2">
+						<div class="card-body">
+							<table class="tb1const-judicial table table-bordered"
+								style="width: 100%">
+								<thead>
+									<tr>
+										<td>Identificacion</td>
+										<td>Tipo Identificacion</td>
+										<td>Nombres</td>
+										<td>Apellidos</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="demandante : ${embargo.demandantes}">
+										<td class="text-uppercase" th:text="${demandante.identificacion}"></td>
+										<td class="text-uppercase" th:text="${demandante.tipoIdentificacion}"></td>
+										<td class="text-uppercase" th:text="${demandante.nombres}"></td>
+										<td class="text-uppercase" th:text="${demandante.apellidos}" /></td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="tb2const-judicial table table-bordered"
+								style="width: 100%">
+								<thead>
+									<tr>
+										<td>Identificacion</td>
+										<td>Tipo Identificacion</td>
+										<td>Nombres</td>
+										<td>Apellidos</td>
+										<td>Monto a Embargar</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="demandado : ${embargo.demandados}">
+										<td class="text-uppercase" th:text="${demandado.identificacion}"></td>
+										<td class="text-uppercase" th:text="${demandado.tipoIdentificacion}">
+										<td class="text-uppercase" th:text="${demandado.nombres}"></td>
+										<td class="text-uppercase" th:text="${demandado.apellidos}"></td>
+										<td th:text="${demandado.montoAEmbargar}"></td>
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer th:replace="layout :: footer"></footer>
+</body>
+</html>

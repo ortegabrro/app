@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head"></head>
+<body>
+
+	<form action="#" th:action="@{/autoridad/coactivo/gestor/form}"
+		th:object="${embargo}" method="post">
+		<nav th:replace="autoridad/coactivo/gestor/navbar :: panel"></nav>
+
+		<div class="container-fluid" id="css-contenido">
+			<div th:replace="layout :: alerts"></div>
+			<div class="card border-dark bg-light" id="card-inicio">
+				<div class="card-header text-white">
+					<div class="d-flex">
+						<div class="mt-2 mb-2" id="card-titulo" th:text="${form}"></div>
+					</div>
+				</div>
+				<div class="content">
+					<div class="card-body">
+						<div class="form-row">
+							<div class="col-md-4">
+								<label>Numero Proceso</label> <input type="text"
+									class="form-control text-uppercase" th:field="*{numProceso}">
+							</div>
+							<div class="col-md-4">
+								<label>Numero Oficio</label> <input type="text"
+									class="form-control text-uppercase" th:field="*{numOficio}">
+							</div>
+							<div class="col-md-4">
+								<label for="fechaOficio">Fecha Oficio</label> <input type="text"
+									id="picker" class="form-control" th:field="*{fechaOficio}"
+									readonly>
+							</div>
+
+						</div>
+						<div class="form-row">
+							<div class="col-md-4">
+								<label for="tipoEmbargo">Tipo Embargo</label> <select
+									th:field="*{tipoEmbargo}" class="form-control" id="tipoEmbargo">
+									<option value="" selected></option>
+									<option
+										th:each="tipoEmbargo : ${T(enumeraciones.TipoEmbargo).values()}"
+										th:value="${tipoEmbargo}" th:text="${tipoEmbargo}"></option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<label for="numCuenta">Numero Cuenta Banco Agrario</label> <input
+									type="text" class="form-control" id="numCuenta"
+									th:field="*{numCuentaAgrario}">
+							</div>
+						</div>
+
+						<div class="card my-2">
+							<div class="card-body">
+								<div class="mb-2">
+									<button type="submit" name="action" value="demandado"
+										class="btn btn-secondary btn-sm">Agregar Demandados</button>
+								</div>
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<td style="width: 13%">Identificacion</td>
+											<td style="width: 12%">Tipo Identificacion</td>
+											<td style="width: 15%">Nombres</td>
+											<td style="width: 15%">Apellidos</td>
+											<td style="width: 15%">Resolucion Embargo</td>
+											<td style="width: 15%">Fecha Resolucion</td>
+											<td style="width: 15%">Monto a Embargar</td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="demandado, item : *{demandados}">
+											<td><input name="identificacion" type="text"
+												class="form-control text-uppercase"
+												th:field="*{demandados[__${item.index}__].identificacion}" />
+											</td>
+											<td><select class="form-control text-uppercase"
+												th:field="*{demandados[__${item.index}__].tipoIdentificacion}">
+													<option value="" selected></option>
+													<option
+														th:each="tipoIdentificacion : 
+											    		${T(enumeraciones.TipoIdentificacion).values()}"
+														th:value="${tipoIdentificacion}"
+														th:text="${tipoIdentificacion}"></option>
+											</select></td>
+											<td><input name="nombres" type="text"
+												class="form-control text-uppercase"
+												th:field="*{demandados[__${item.index}__].nombres}" /></td>
+											<td><input name="apellidos" type="text"
+												class="form-control text-uppercase"
+												th:field="*{demandados[__${item.index}__].apellidos}" /></td>
+											<td><input name="resEmbargo" type="text"
+												class="form-control text-uppercase"
+												th:field="*{demandados[__${item.index}__].resEmbargo}" /></td>
+											<td><input name="fechaResolucion" type="text"
+												class="form-control text-uppercase" id="picker"
+												th:field="*{demandados[__${item.index}__].fechaResolucion}"
+												readonly /></td>
+											<td><input name="montoAEmbargar" type="text"
+												class="form-control text-uppercase"
+												th:field="*{demandados[__${item.index}__].montoAEmbargar}" />
+											</td>
+										</tr>
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input type="hidden" th:field="*{idEmbargo}" /> <input type="hidden"
+			th:field="*{idAutoridad}" />
+	</form>
+	<footer th:replace="layout :: footer"></footer>
+
+</body>
+
+</html>

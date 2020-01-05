@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<nav class="navbar navbar-expand-md navbar-dark" id="css-panel"
+		th:fragment="panel">
+
+		<div class="collapse navbar-collapse" id="css-menu">
+
+			<ul class="nav navbar-nav mr-auto">
+				<li class="nav-item" id="css-lista">
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<th:block th:switch="${boton}">
+							<th:block th:case="all">
+								<button type="submit" name="action" value="crear"
+									class="btn btn-primary border-right border-dark">Crear
+									Autoridad</button>
+								<button type="submit" name="action" value="consultar"
+									class="btn btn-primary border-right border-dark">Consultar
+									Autoridad</button>
+								<button class="btn btn-primary border-right border-dark"
+									disabled>Log Blockchain</button>
+							</th:block>
+							<th:block th:case="actualizar">
+								<button type="submit" name="action" value="actualizar"
+									class="btn btn-primary border-right border-dark">Actualizar
+								</button>
+							</th:block>
+							<th:block th:if="${boton} eq 'onactualizar' or ${boton} eq 'inactualizar'">
+								<button type="submit" name="action" value="onactualizar"
+									class="btn btn-primary border-right border-dark">Actualizar
+									Autoridad</button>
+							</th:block>
+							<a class="btn btn-primary border-right border-dark"
+								th:href="@{'/admin/app'}"> Limpiar</a>
+						</th:block>
+					</div>
+				</li>
+			</ul>
+
+			<ul th:replace="layout :: login"></ul>
+
+		</div>
+	</nav>
+
+
+</body>
+</html>

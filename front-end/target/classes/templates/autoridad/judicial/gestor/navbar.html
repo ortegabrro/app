@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<nav class="navbar navbar-expand-md navbar-dark" id="css-panel"
+		th:fragment="panel">
+
+		<div class="collapse navbar-collapse" id="css-menu">
+
+			<ul class="nav navbar-nav mr-auto">
+				<li class="nav-item" id="css-lista">
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<th:block th:switch="${boton}">
+							<th:block th:case="all">
+								<button id="set_file" type="button"
+									class="btn btn-primary border-right border-dark"
+									onclick="window.location.href='/autoridad/judicial/gestor/cargar'">Cargar</button> -->
+								<span  class="btn btn-primary border-right border-dark btn-file">
+								    Cargar<input id="get_file" type="file" name="file">
+								</span>
+								<button type="submit" name="action" value="aplicar"
+									class="btn btn-primary border-right border-dark">Aplicar</button>
+								<button type="submit" name="action" value="consultar"
+									class="btn btn-primary border-right border-dark">Consultar</button>
+							</th:block>
+							<th:block th:case="consulta">
+								<th:block th:if=${embargo.embargoProcesado==false}>
+									<button type="submit"
+										class="btn btn-primary border-right border-dark">Aplicar</button>
+								</th:block>
+								<button class="btn btn-primary border-right border-dark"
+									disabled>Desembargar</button>
+							</th:block>
+
+							<a class="btn btn-primary border-right border-dark"
+								th:href="@{'/autoridad/judicial/gestor'}"> Limpiar</a>
+							<button class="btn btn-primary border-right border-dark" disabled>Imprimir</button>
+						</th:block>
+					</div>
+				</li>
+			</ul>
+
+			<ul th:replace="layout :: login"></ul>
+
+		</div>
+	</nav>
+
+
+</body>
+</html>

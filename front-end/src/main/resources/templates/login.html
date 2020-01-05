@@ -1,0 +1,230 @@
+	<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title th:text="${titulo}">Insert title here</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/css/stylelogin.css}">
+
+</head>
+<body>
+	<div th:replace="layout :: alerts"></div>
+	<div class="container py-4">
+
+		<div class="text-center mb-4">
+			<img class="mb-4" th:src="@{/css/images/face.png}" alt="" width="72"
+				height="72">
+			<h1 class="h3 mb-3 font-weight-normal text-white">Iniciar Sesion</h1>
+		</div>
+
+		<form class="form-signin" th:action="@{/login}" method="post">
+			
+			<div class="form-label-group">
+				<input type="text" name="username" id="username"
+					class="form-control text-uppercase" placeholder="Nombre de Usuario" autofocus
+					required /> <label for="username">Nombre de Usuario</label>
+			</div>
+
+			<div class="form-label-group">
+				<input type="password" name="password" id="password"
+					class="form-control text-uppercase" placeholder="Contraseña" required /> <label
+					for="password">Contraseña</label>
+			</div>
+			
+			<!-- 
+			<div class="form-label-group">
+				<input type="text" name="id" id="id" class="form-control"
+					placeholder="Identificacion" autofocus required /> <label for="id">Identificacion</label>
+			</div>
+			
+			<div class="form-label-group">
+				<select class="form-control" name="tipoUsuario" id="tipoUsuario"
+					required>
+					<option value="">Tipo Usuario</option>
+					<option value="autoridad">AUTORIDAD</option>
+					<option value="entidad">ENTIDAD</option>
+					<option value="persona">PERSONA</option>
+				</select>
+			</div> -->
+
+			<div class="form-label-group">
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar
+					Sesion</button>
+			</div>
+			
+			<div class="dropdown-divider"></div>
+			<a class="text-white btn btn-link"
+				th:href="@{/crear}">Crear Usuario</a>
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+		</form>
+	</div>
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script th:src="@{/js/popper.min.js}"></script>
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<script type="text/javascript">
+		$(".alert").fadeTo(2000, 500).slideUp(500, function(){
+		    $(".alert-dismissible").alert('close');
+		});
+	</script>
+</body>
+</html>
+
+
+<!--
+
+<div class="text-center mb-4">
+			<img class="mb-4" th:src="@{/css/images/face.png}" alt="" width="72"
+				height="72">
+			<h1 class="h3 mb-3 font-weight-normal text-white">Iniciar Sesion</h1>
+		</div>
+
+		<form class="form-signin" th:action="@{/login}" method="post">
+
+			<div class="form-label-group">
+				<input type="text" name="username" id="username"
+					class="form-control" placeholder="UserName" autofocus required />
+					<label for="username">Nombre de Usuario</label>
+			</div>
+
+			<div class="form-label-group">
+				<input type="password" name="password" id="password"
+					class="form-control" placeholder="Password" required />
+					<label for="password">Password</label>
+			</div>
+			
+			<div class="form-label-group">
+				<input type="submit" class="btn btn-lg btn-primary btn-block"
+					value="Iniciar Sesion" />
+			</div>
+			<input type="hidden" th:name="${_csrf.parameterName}"
+						th:value="${_csrf.token}" />
+
+		</form>
+
+
+<form class="form-signin" th:action="@{/login}" method="post">
+
+		<div class="text-center mb-4">
+			<img class="mb-4" th:src="@{/css/images/face.png}" alt="" width="72"
+				height="72">
+			<h1 class="h3 mb-3 font-weight-normal text-white">Iniciar Sesion</h1>
+		</div>
+
+		<div class="form-label-group">
+			<input type="text" name="username" id="username" class="form-control"
+				placeholder="Nombre Usuario" required autofocus>
+				<label for="username">Email address</label>
+		</div>
+
+		<div class="form-label-group">
+			<input type="password" id="inputPassword" class="form-control"
+				placeholder="Password" required> <label for="inputPassword">Password</label>
+		</div>
+
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar Sesion</button>
+	</form>
+
+
+
+<div class="container py-4">
+
+		<div class="card border-primary text-center">
+			<div class="card-header">Iniciar Sesion</div>
+			<div class="card-body">
+
+				<form th:action="@{/login}" method="post">
+
+					<div class="form-group col-sm-6">
+						<input type="text" name="username" id="username"
+							class="form-control" placeholder="UserName" autofocus required />
+					</div>
+
+					<div class="form-group col-sm-6">
+						<input type="password" name="password" id="password"
+							class="form-control" placeholder="Password" required />
+					</div>
+
+					<div class="form-group col-sm-6">
+						<input type="submit" class="btn btn-lg btn-primary btn-block"
+							value="Iniciar Sesion" />
+					</div>
+					<input type="hidden" th:name="${_csrf.parameterName}"
+						th:value="${_csrf.token}" />
+
+				</form>
+
+			</div>
+
+		</div>
+
+
+	</div>
+	<footer th:replace="judicial/layout :: footer"></footer> 
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title th:text="${titulo}">Insert title here</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/css/stylelogin.css}">
+
+</head>
+<body>
+	<div class="container">
+
+		<div class="row justify-content-around">
+			<div class="col">
+				<div class="card border-dark">
+					<div class="card-header">Iniciar Sesion</div>
+					<div class="card-body">
+						<form>
+							<div class="form-group">
+							    <label for="exampleInputEmail1">Id Autoridad</label>
+							    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required> 
+							 </div>
+							 <div class="form-group">
+							    <label for="exampleInputPassword1">Certificado</label>
+  							</div>
+      						 <button class="btn btn-primary" type="submit"
+      						 onclick="window.location.href='/app/judicial/main'">Iniciar Sesion</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col">
+				<div class="card border-dark">
+					<div class="card-header">Crear Autoridad</div>
+					<div class="card-body">
+						<form>
+							<div class="form-group">
+							    <label for="exampleInputEmail1">Id</label>
+							    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required> 
+							 </div>
+							 <div class="form-group">
+							    <label for="exampleInputEmail1">Nombre</label>
+							    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required> 
+							 </div>
+							 <div class="form-group">
+							    <label for="exampleInputEmail1">Tipo</label>
+							    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required> 
+							 </div>
+							 <div class="form-group">
+							    <label for="exampleInputEmail1">Direccion</label>
+							    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required> 
+							 </div>
+      						 <button class="btn btn-primary" type="submit">Crear Autoridad</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+ -->

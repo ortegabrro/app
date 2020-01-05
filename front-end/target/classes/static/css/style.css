@@ -1,0 +1,74 @@
+body {
+	font-family: Century Gothic;
+}
+
+#css-panel {
+	background: #0171BB;
+	color: #FFFFFF;
+	top:0;
+}
+
+#css-lista {
+	background: #666666;
+	text-align: center;
+	border-color: black;
+}
+
+#css-contenido, #css-menu{
+	font-size: 15px;
+}
+
+input::placeholder {
+	font-size: 15px;
+}
+
+.btn {
+	font-size: 15px;
+}
+
+label, input {
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+.card {
+	margin-top: 3.5px !important;
+	margin-bottom: 3.5px !important;
+}
+
+.pagination {
+	margin-top: 1.5px;
+	margin-bottom: 1px;
+}
+
+.card-header {
+	background: #0171BB;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.card-body {
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+
+caption-side: top;
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 15px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;   
+    cursor: inherit;
+    display: block;
+}

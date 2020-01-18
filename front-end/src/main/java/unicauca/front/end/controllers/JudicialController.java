@@ -82,7 +82,7 @@ import simulacion.SimulacionPasarelas;
 import unicauca.front.end.service.Consulta;
 import unicauca.front.end.service.Service;
 import util.SessionHelper;
-
+//3136347333
 @Controller
 @RequestMapping("/autoridad/judicial")
 public class JudicialController {
@@ -101,7 +101,12 @@ public class JudicialController {
 		session = new SessionHelper();
 		service = new Service();
 	}
-
+	
+	/***
+	 * 
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/secretario")
 	public String secretario(Model model) {
 		EmbargoJudicial embargoJudicial = new EmbargoJudicial();
@@ -277,6 +282,9 @@ public class JudicialController {
 	@RequestMapping(value = "/gestor/form", method = RequestMethod.POST, params = "action=aplicar")
 	public String aplicar(@ModelAttribute(name = "embargo") EmbargoJudicial embargo, Model model,
 			RedirectAttributes flash) {
+		System.out.println("Monto:"+ embargo.getMontoAEmbargar());
+		return "redirect:/autoridad/judicial/gestor";
+		/*
 		try {
 			KieSession sessionStatefull = session.obtenerSesion();
 			sessionStatefull.insert(embargo);
@@ -293,7 +301,7 @@ public class JudicialController {
 		} catch (NullPointerException e) {
 			flash.addFlashAttribute("warning", "No se puede Aplicar,Por favor llenar el formulario");
 			return "redirect:/autoridad/judicial/gestor";
-		}
+		}*/
 	}
 
 	@PostMapping("/gestor/aplicar")

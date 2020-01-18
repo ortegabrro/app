@@ -12,8 +12,8 @@ public class BackEndController {
 	public static Usuario obtenerUsuario(String username) {
 		Usuario usuario=null;
 		
-		//String json= EmbargosController.obtenerUsuario(username);
-		String json="{\"identificacion\":123,\"tipoIdentificacion\":\"NATURAL\",\"nombres\":\"santiago\",\"apellidos\":\"ortega\",\"username\":\"as\",\"password\":123,\"confirmPassword\":123}";
+		String json= EmbargosController.obtenerUsuario(username);
+		//String json="{\"identificacion\":123,\"tipoIdentificacion\":\"NATURAL\",\"nombres\":\"santiago\",\"apellidos\":\"ortega\",\"username\":\"as\",\"password\":123,\"confirmPassword\":123}";
 		if(!json.isEmpty()) {
 			System.out.println("Json: " + json);
 			usuario = new Gson().fromJson(json, Usuario.class);

@@ -6,7 +6,7 @@
 		Panel-->
 
 	<div class="content" th:each="autoridad, item : *{autoridades}">
-		<form action="#" th:action="@{/admin/app/form}" method="post">
+		<form action="#" th:action="@{'/admin/app/consulta/'+${consulta}}" method="post">
 			<nav th:replace="admin/navbar :: panel" class="align-top"></nav>
 			<div class="container-fluid" id="css-contenido">
 				<div th:replace="layout :: alerts"></div>
@@ -96,109 +96,16 @@
 											<td th:text="${usuario.apellidos}"></td>
 											<td th:text="${usuario.username}"></td>
 										</tr>
-										
-										<!--
-										<tr th:each="usuario: ${autoridad.usuarios}">
-											<td th:text="${usuario.identificacion}"></td>
-											<td th:text="${usuario.tipoIdentificacion}"></td>
-											<td th:text="${usuario.nombres}"></td>
-											<td th:text="${usuario.apellidos}"></td>
-											<td th:text="${usuario.username}"></td>
-										</tr>
-										
-										<tr th:each="usuario:${autoridad.usuarios}">
-										<td><input name="identificacion" id="identificacion" type="text"
-											class="form-control text-uppercase"
-											th:text="${usuario.identificacion}" /></td>
-										<td><input type="text" class="form-control text-uppercase"
-											th:text="${usuario.tipoIdentificacion}"
-											name="tipoIdentificacion" id="tipoIdentificacion" /></td>
-										<td><input name="nombres" id="nombres" type="text"
-											class="form-control text-uppercase"
-											th:text="${usuario.nombres}" /></td>
-										<td><input name="apellidos" id="apellidos" type="text"
-											class="form-control text-uppercase"
-											th:text="${usuario.apellidos}" /></td>
-										<td><input name="username" id="username" type="text"
-											class="form-control text-uppercase"
-											th:text="${usuario.username}" /></td>
-									</tr>
-										
-										<tr th:each="usuario, item : *{autoridad.usuarios}">
-											<td><input name="identificacion" id="identificacion"
-												type="text" class="form-control text-uppercase"
-												th:field="*{autoridad.usuarios[__${item.index}__].identificacion}" /></td>
-											<td><input type="text"
-												class="form-control text-uppercase"
-												th:field="*{autoridad.usuarios[__${item.index}__].tipoIdentificacion}"
-												name="tipoIdentificacion" id="tipoIdentificacion" /></td>
-											<td><input name="nombres" id="nombres" type="text"
-												class="form-control text-uppercase"
-												th:field="*{autoridad.usuarios[__${item.index}__].nombres}"
-												 /></td>
-											<td><input name="apellidos" id="apellidos" type="text"
-												class="form-control text-uppercase"
-												th:field="*{autoridad.usuarios[__${item.index}__].apellidos}" /></td>
-											<td><input name="username" id="username" type="text"
-												class="form-control text-uppercase"
-												th:field="*{autoridad.usuarios[__${item.index}__].username}" /></td>
-										</tr>
-									
-										
-									
-									
-									<tr th:each="usuario, item : *{usuarios}">
-										<td><input name="identificacion" id="identificacion" type="text"
-											class="form-control text-uppercase"
-											th:field="*{usuarios[__${item.index}__].identificacion}" readonly/></td>
-										<td><input type="text" class="form-control text-uppercase"
-											th:field="*{usuarios[__${item.index}__].tipoIdentificacion}"
-											name="tipoIdentificacion" id="tipoIdentificacion" readonly/></td>
-										<td><input name="nombres" id="nombres" type="text"
-											class="form-control text-uppercase"
-											th:field="*{usuarios[__${item.index}__].nombres}" readonly/></td>
-										<td><input name="apellidos" id="apellidos" type="text"
-											class="form-control text-uppercase"
-											th:field="*{usuarios[__${item.index}__].apellidos}" readonly/></td>
-										<td><input name="username" id="username" type="text"
-											class="form-control text-uppercase"
-											th:field="*{usuarios[__${item.index}__].username}" readonly/></td>
-									</tr>
-									<!-- 
-										
-									<!-- 
-									<tr th:each="usuario:${autoridad.usuarios}">
-										<td><input name="identificacion" id="identificacion" type="text"
-											class="form-control text-uppercase"
-											th:value="${usuario.identificacion}" /></td>
-										<td><input type="text" class="form-control text-uppercase"
-											th:value="${usuario.tipoIdentificacion}"
-											name="tipoIdentificacion" id="tipoIdentificacion" /></td>
-										<td><input name="nombres" id="nombres" type="text"
-											class="form-control text-uppercase"
-											th:value="${usuario.nombres}" /></td>
-										<td><input name="apellidos" id="apellidos" type="text"
-											class="form-control text-uppercase"
-											th:value="${usuario.apellidos}" /></td>
-										<td><input name="username" id="username" type="text"
-											class="form-control text-uppercase"
-											th:value="${usuario.username}" /></td>
-									</tr> -->
 									</tbody>
 								</table>
 							</div>
 						</div>
-
 					</div>
 				</div>
 			</div>
-
+			<input type="hidden" th:value="*{mensaje}" />
 		</form>
 	</div>
-
-
-
-
 	<footer th:replace="layout :: footer"></footer>
 </body>
 </html>

@@ -8,8 +8,7 @@
 </head>
 <body>
 	<!--Panel-->
-
-	<form action="#" th:action="@{/admin/app/form}" method="post">
+	<form action="#" th:action="@{'/admin/app/form/'+${consulta}}" method="post">
 		<nav th:replace="admin/navbar :: panel"></nav>
 		<div class="container-fluid" id="css-contenido" th:fragment="main">
 			<div th:replace="layout :: alerts"></div>

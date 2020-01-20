@@ -1,56 +1,33 @@
 package unicauca.front.end.controllers;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 
 import controladores.EmbargosController;
 import enumeraciones.Ciudad;
 import enumeraciones.Departamento;
 import enumeraciones.TipoAutoridad;
-import enumeraciones.TipoEmbargo;
 import enumeraciones.TipoIdentificacion;
 import modelo.Autoridad;
-import modelo.Demandado;
-import modelo.Demandante;
-import modelo.EmbargoCoactivo;
-import modelo.EmbargoJudicial;
 import modelo.Usuario;
-//import simulacion.SimulacionCasos;
 import unicauca.front.end.service.Consulta;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-	private Faker faker;
 	private String boton;
 
 	@GetMapping("/app")
@@ -66,32 +43,37 @@ public class AdminController {
 		return "admin/main";
 	}
 
-	@RequestMapping(value = "/app/form", method = RequestMethod.POST, params = "action=crear")
+	@RequestMapping(value = "/app/form/{consulta}", method = RequestMethod.POST, params = "action=crear")
 	public String crearAut(@ModelAttribute(name = "autoridad") Autoridad autoridad, Model model,
 			RedirectAttributes flash) {
+		//user=as, id=123
+		//user=df, id=123
 		boolean band = false;
 		int tam = autoridad.getUsuarios().size();
 		if (checkAutoridad(autoridad)) {
 			if (checkUsuario(autoridad.getUsuarios().get(tam - 1))) {
-
 				if (BackEndController.obtenerUsuario(autoridad.getUsuarios().get(tam - 1).getUsername()) == null) {
-					if (autoridad.getUsuarios().get(tam - 1).getConfirmPassword()
-							.equals(autoridad.getUsuarios().get(tam - 1).getPassword())) {
+					
+						if (autoridad.getUsuarios().get(tam - 1).getConfirmPassword()
+								.equals(autoridad.getUsuarios().get(tam - 1).getPassword())) {
 
-						autoridad.getUsuarios().get(tam - 1).setOwnedBy(autoridad.getIdAutoridad());
-						autoridad.getUsuarios().get(tam - 1).getRoles().add("ADMIN");
-						EmbargosController.guardarUsuario(autoridad.getUsuarios().get(tam - 1));
-						band = true;
-					} else {
-						flash.addFlashAttribute("error",
-								"No se puede Crear Autoridad,Contraseñas de Usuario no coinciden");
-						band = false;
-					}
+							autoridad.getUsuarios().get(tam - 1).setOwnedBy(autoridad.getIdAutoridad());
+							autoridad.getUsuarios().get(tam - 1).getRoles().add("ADMIN");
+							EmbargosController.guardarUsuario(autoridad.getUsuarios().get(tam - 1));
+							band = true;
+						} else {
+							flash.addFlashAttribute("error",
+									"No se puede Crear Autoridad,Contraseñas de Usuario no coinciden");
+							band = false;
+						}
+					
+
 				} else {
 					flash.addFlashAttribute("error", "No se puede Crear Autoridad,Nombre de Usuario ya existe");
 					autoridad.getUsuarios().get(tam - 1).setUsername(null);
 					band = false;
 				}
+
 			} else {
 				flash.addFlashAttribute("error", "No se puede Crear Autoridad,Por favor llenar el formulario Usuario");
 				band = false;
@@ -121,7 +103,7 @@ public class AdminController {
 		return "admin/main";
 	}
 
-	@RequestMapping(value = "/app/form", method = RequestMethod.POST, params = "action=agregar")
+	@RequestMapping(value = "/app/form/{consulta}", method = RequestMethod.POST, params = "action=agregar")
 	public String agregar(Model model, @ModelAttribute(name = "autoridad") Autoridad autoridad,
 			RedirectAttributes flash) {
 		boton = "all";
@@ -130,7 +112,7 @@ public class AdminController {
 		return "redirect:/admin/app/agregar";
 	}
 
-	@RequestMapping(value = "/app/form", method = RequestMethod.POST, params = "action=inactualizar")
+	@RequestMapping(value = "/app/form/{consulta}", method = RequestMethod.POST, params = "action=inactualizar")
 	public String upagregar(@ModelAttribute(name = "autoridad") Autoridad autoridad, RedirectAttributes flash) {
 		boton = "onactualizar";
 		autoridad.getUsuarios().add(new Usuario());
@@ -139,7 +121,7 @@ public class AdminController {
 		return "redirect:/admin/app/crear";
 	}
 
-	@RequestMapping(value = "/app/form", method = RequestMethod.POST, params = "action=onagregar")
+	@RequestMapping(value = "/app/form/{consulta}", method = RequestMethod.POST, params = "action=onagregar")
 	public String onagregar(Model model, @ModelAttribute(name = "autoridad") Autoridad autoridad,
 			RedirectAttributes flash) {
 		boton = "onactualizar";
@@ -155,20 +137,28 @@ public class AdminController {
 		int tam = autoridad.getUsuarios().size();
 
 		if (checkUsuario(autoridad.getUsuarios().get(tam - 1))) {
+
 			if (BackEndController.obtenerUsuario(autoridad.getUsuarios().get(tam - 1).getUsername()) == null) {
-				if (autoridad.getUsuarios().get(tam - 1).getConfirmPassword()
-						.equals(autoridad.getUsuarios().get(tam - 1).getPassword())) {
-					EmbargosController.guardarUsuario(autoridad.getUsuarios().get(tam - 1));
-					autoridad.getUsuarios().add(new Usuario());
+				if (!BackEndController.obtenerUsuario(autoridad.getUsuarios().get(tam - 1).getUsername())
+						.getIdentificacion().equals(autoridad.getUsuarios().get(tam - 1).getIdentificacion())) {
+					if (autoridad.getUsuarios().get(tam - 1).getConfirmPassword()
+							.equals(autoridad.getUsuarios().get(tam - 1).getPassword())) {
+						EmbargosController.guardarUsuario(autoridad.getUsuarios().get(tam - 1));
+						autoridad.getUsuarios().add(new Usuario());
+					} else {
+						flash.addFlashAttribute("error", "No se puede Agregar Usuario,Contraseñas no coinciden");
+						autoridad.getUsuarios().get(tam - 1).setPassword(null);
+						autoridad.getUsuarios().get(tam - 1).setConfirmPassword(null);
+					}
 				} else {
-					flash.addFlashAttribute("error", "No se puede Agregar Usuario,Contraseñas no coinciden");
-					autoridad.getUsuarios().get(tam - 1).setPassword(null);
-					autoridad.getUsuarios().get(tam - 1).setConfirmPassword(null);
+					flash.addFlashAttribute("error", "No se puede Agregar Usuario,Identificacion ya existe");
+					autoridad.getUsuarios().get(tam - 1).setUsername(null);
 				}
 			} else {
 				flash.addFlashAttribute("error", "No se puede Agregar Usuario,Nombre de Usuario ya existe");
 				autoridad.getUsuarios().get(tam - 1).setUsername(null);
 			}
+
 		} else {
 			flash.addFlashAttribute("error", "No se puede Agregar Usuario,Por favor llenar el formulario");
 			autoridad.setIdAutoridad(null);
@@ -179,43 +169,20 @@ public class AdminController {
 		return "redirect:/admin/app/crear";
 	}
 
-	@RequestMapping(value = "/app/form", method = RequestMethod.POST, params = "action=consultar")
-	public String consultaAut(@ModelAttribute(name = "autoridad") Autoridad autoridad, RedirectAttributes flash) {
-		flash.addFlashAttribute("autoridad", autoridad);
-		return "redirect:/admin/app/consulta";
-		// return "redirect:/admin/app/consultar";
-	}
-
-	@GetMapping("/app/consulta")
-	public String loadConsulta(@ModelAttribute(name = "autoridad") Autoridad autoridad, Model model,
+	@RequestMapping(value = "/app/form/{consulta}", method = RequestMethod.POST, params = "action=consultar")
+	public String consultaAut(@ModelAttribute(name = "autoridad") Autoridad autoridad, Model model,
 			RedirectAttributes flash) throws JSONException {
-
 		Consulta selector = new Consulta();
 		if (!consulta(autoridad).isEmpty()) {
 			selector.setSelector(consulta(autoridad));
 			Gson gson = new Gson();
 			String consulta = gson.toJson(selector);
 			System.out.println("Consulta: " + consulta);
-
-			// String mensaje =
-			// "{\"key\":1,\"Record\":{\"idAutoridad\":\"AUT1\",\"nombre\":\"JUZGADO1\",\"tipoAutoridad\":\"JUDICIAL\",\"direccion\":\"Calle
-			// 2 #
-			// 489\",\"departamento\":\"CAUCA\",\"ciudad\":\"POPAYÁN\",\"usuarios\":[{\"identificacion\":789,\"tipoIdentificacion\":\"NATURAL\",\"nombres\":\"santiago\",\"apellidos\":\"ortega\",\"username\":\"as\"},{\"identificacion\":678,\"tipoIdentificacion\":\"NATURAL\",\"nombres\":\"carlos\",\"apellidos\":\"ruiz\",\"username\":\"cr\"}]}},{\"key\":2,\"Record\":{\"idAutoridad\":\"AUT2\",\"nombre\":\"JUZGADO2\",\"tipoAutoridad\":\"JUDICIAL\",\"direccion\":\"Calle
-			// 12 #
-			// 459\",\"departamento\":\"CAUCA\",\"ciudad\":\"POPAYÁN\",\"usuarios\":[{\"identificacion\":098,\"tipoIdentificacion\":\"NATURAL\",\"nombres\":\"daniel\",\"apellidos\":\"agredo\",\"username\":\"dg\"},{\"identificacion\":430,\"tipoIdentificacion\":\"NATURAL\",\"nombres\":\"juan\",\"apellidos\":\"pizo\",\"username\":\"cr\"}]}}";
-
-			String mensaje = EmbargosController.consultaGeneral(consulta);
-			System.out.println("Mensaje: " + mensaje);
-			ArrayList<Autoridad> autoridades = new ArrayList<Autoridad>();
-			mensaje = "[" + mensaje + "]";
-			JSONArray myjson = new JSONArray(mensaje);
-			for (int i = 0; i < myjson.length(); i++) {
-				JSONObject jsonRecord = myjson.getJSONObject(i).getJSONObject("Record");
-				autoridades.add(jsontoObject(jsonRecord));
-			}
+			ArrayList<Autoridad> autoridades = jsontoArray(consulta);
 			model.addAttribute("titulo", "Consulta");
 			model.addAttribute("form", "Consultas");
 			model.addAttribute("autoridades", autoridades);
+			model.addAttribute("consulta", consulta);
 			boton = "actualizar";
 			model.addAttribute("boton", boton);
 			return "admin/consulta";
@@ -225,42 +192,44 @@ public class AdminController {
 		}
 	}
 
-	@RequestMapping(value = "/app/form", method = RequestMethod.POST, params = "action=actualizar")
-	public String actualizar(Model model, @ModelAttribute(name = "autoridad") Autoridad autoridad,
-			RedirectAttributes flash) {
+	@RequestMapping(value = "/app/consulta/{consulta}", method = RequestMethod.POST, params = "action=actualizar")
+	public String actualizar(@ModelAttribute(name = "autoridad") Autoridad autoridad, Model model,
+			RedirectAttributes flash, @PathVariable(value = "consulta") String consulta) {
 
-		// Buscar autoridad por el id
 		Autoridad autoridadnew = BackEndController.obtenerAutoridad(autoridad.getIdAutoridad());
-		// Autoridad autoridadnew = create();
 		autoridad.setHabilitado(true);
 		model.addAttribute("titulo", "Actualizar");
 		model.addAttribute("form", "Formulario");
 		model.addAttribute("autoridad", autoridadnew);
 		boton = "inactualizar";
 		model.addAttribute("boton", boton);
+		model.addAttribute("consulta", consulta);
 		return "admin/main";
 	}
 
-	@RequestMapping(value = "/app/form", method = RequestMethod.POST, params = "action=onactualizar")
+	@RequestMapping(value = "/app/form/{consulta}", method = RequestMethod.POST, params = "action=onactualizar")
 	public String actualizarOn(Model model, @ModelAttribute(name = "autoridad") Autoridad autoridad,
-			RedirectAttributes flash) {
-
+			RedirectAttributes flash, @PathVariable(value = "consulta") String consulta) {
 		boolean band = false;
 		if (checkAutoridad(autoridad)) {
 			for (int i = 0; i < autoridad.getUsuarios().size(); i++) {
-				if (checkUsuario(autoridad.getUsuarios().get(i))) { 
+				if (checkUsuario(autoridad.getUsuarios().get(i))) {
 					if (BackEndController.obtenerUsuario(autoridad.getUsuarios().get(i).getUsername()) == null) {
-						if (autoridad.getUsuarios().get(i).getPassword().equals(autoridad.getUsuarios().get(i).getConfirmPassword())) {
-							EmbargosController.guardarUsuario(autoridad.getUsuarios().get(i));
-							band = true;
-						} else {
-							flash.addFlashAttribute("error",
-									"No se puede Actualizar Autoridad,Contraseñas de Usuario no coinciden");
-							band = false;
-						}
+						
+							if (autoridad.getUsuarios().get(i).getPassword()
+									.equals(autoridad.getUsuarios().get(i).getConfirmPassword())) {
+								EmbargosController.guardarUsuario(autoridad.getUsuarios().get(i));
+								band = true;
+							} else {
+								flash.addFlashAttribute("error",
+										"No se puede Actualizar Autoridad,Contraseñas de Usuario no coinciden");
+								band = false;
+							}
+						
 					} else {
-						Usuario userfind = BackEndController.obtenerUsuario(autoridad.getUsuarios().get(i).getUsername());
-						updateUser(userfind,autoridad.getUsuarios().get(i));
+						Usuario userfind = BackEndController
+								.obtenerUsuario(autoridad.getUsuarios().get(i).getUsername());
+						updateUser(userfind, autoridad.getUsuarios().get(i));
 						band = true;
 					}
 				} else {
@@ -269,23 +238,34 @@ public class AdminController {
 					band = false;
 				}
 			}
-			Autoridad autoridadfind= BackEndController.obtenerAutoridad(autoridad.getIdAutoridad());
-			updateAutoridad(autoridadfind,autoridad);
+			Autoridad autoridadfind = BackEndController.obtenerAutoridad(autoridad.getIdAutoridad());
+			updateAutoridad(autoridadfind, autoridad);
 		} else {
 			flash.addFlashAttribute("error", "No se puede Crear Autoridad,Por favor llenar el formulario");
 			band = false;
 		}
-
 		if (band == true) {
 			flash.addFlashAttribute("success", "Autoridad actualizada con exito");
 			boton = "actualizar";
-			flash.addFlashAttribute("autoridad", autoridad);
 			flash.addFlashAttribute("boton", boton);
+			flash.addFlashAttribute("consulta", consulta);
 			return "redirect:/admin/app/consulta";
 		} else {
 			flash.addFlashAttribute("autoridad", autoridad);
 			return "redirect:/admin/app/actualizar";
 		}
+	}
+
+	@GetMapping("/app/consulta")
+	public String loadConsulta(@ModelAttribute(name = "consulta") String consulta, Model model) throws JSONException {
+
+		ArrayList<Autoridad> autoridades = jsontoArray(consulta);
+		model.addAttribute("titulo", "Consulta");
+		model.addAttribute("form", "Consultas");
+		model.addAttribute("autoridades", autoridades);
+		model.addAttribute("consulta", consulta);
+		return "admin/consulta";
+
 	}
 
 	@GetMapping("/app/actualizar")
@@ -297,19 +277,16 @@ public class AdminController {
 		return "admin/main";
 	}
 
-	public void updateUser(Usuario userfind,Usuario usuario) {
-		userfind.setIdentificacion(usuario.getIdentificacion());
+	public void updateUser(Usuario userfind, Usuario usuario) {
 		userfind.setTipoIdentificacion(usuario.getTipoIdentificacion());
 		userfind.setNombres(usuario.getNombres());
 		userfind.setApellidos(usuario.getApellidos());
-		userfind.setUsername(usuario.getUsername());
 		userfind.setPassword(usuario.getPassword());
 		userfind.setConfirmPassword(usuario.getPassword());
 		EmbargosController.editarUsuario(userfind);
 	}
-	
-	public void updateAutoridad(Autoridad autoridadfind,Autoridad autoridad) {
-		autoridadfind.setIdAutoridad(autoridad.getIdAutoridad());
+
+	public void updateAutoridad(Autoridad autoridadfind, Autoridad autoridad) {
 		autoridadfind.setNombre(autoridad.getNombre());
 		autoridadfind.setTipoAutoridad(autoridad.getTipoAutoridad());
 		autoridadfind.setDireccion(autoridad.getDireccion());
@@ -317,6 +294,12 @@ public class AdminController {
 		autoridadfind.setDepartamento(autoridad.getDepartamento());
 		autoridadfind.setUsuarios(autoridad.getUsuarios());
 		EmbargosController.editarAutoridad(autoridadfind);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public HashMap<String, String> consulta(Autoridad autoridad) {
@@ -324,49 +307,36 @@ public class AdminController {
 
 		if (!autoridad.getIdAutoridad().isEmpty()) {
 			campos.put("idAutoridad", autoridad.getIdAutoridad());
-		} else {
-			if (!autoridad.getNombre().isEmpty()) {
-				campos.put("nombre", autoridad.getNombre());
-			} else {
-				if (autoridad.getTipoAutoridad() != null) {
-					campos.put("tipoAutoridad", autoridad.getTipoAutoridad().toString());
-				} else {
-					if (!autoridad.getDireccion().isEmpty()) {
-						campos.put("direccion", autoridad.getDireccion());
-					} else {
-						if (autoridad.getDepartamento() != null) {
-							campos.put("departamento", autoridad.getDepartamento().toString());
-						} else {
-							if (autoridad.getCiudad() != null) {
-								campos.put("ciudad", autoridad.getCiudad().toString());
-							} else {
-								if (!autoridad.getUsuarios().get(0).getIdentificacion().isEmpty()) {
-									campos.put("identificacion", autoridad.getUsuarios().get(0).getIdentificacion());
-								} else {
-									if (autoridad.getUsuarios().get(0).getTipoIdentificacion() != null) {
-										campos.put("tipoIdentificacion",
-												autoridad.getUsuarios().get(0).getTipoIdentificacion().toString());
-									} else {
-										if (!autoridad.getUsuarios().get(0).getNombres().isEmpty()) {
-											campos.put("nombres", autoridad.getUsuarios().get(0).getNombres());
-										} else {
-											if (!autoridad.getUsuarios().get(0).getApellidos().isEmpty()) {
-												campos.put("apellidos", autoridad.getUsuarios().get(0).getApellidos());
-											} else {
-												if (!autoridad.getUsuarios().get(0).getUsername().isEmpty()) {
-													campos.put("username",
-															autoridad.getUsuarios().get(0).getUsername());
-												}
-											}
-										}
-									}
-								}
-							}
-
-						}
-					}
-				}
-			}
+		}
+		if (!autoridad.getNombre().isEmpty()) {
+			campos.put("nombre", autoridad.getNombre());
+		}
+		if (autoridad.getTipoAutoridad() != null) {
+			campos.put("tipoAutoridad", autoridad.getTipoAutoridad().toString());
+		}
+		if (!autoridad.getDireccion().isEmpty()) {
+			campos.put("direccion", autoridad.getDireccion());
+		}
+		if (autoridad.getDepartamento() != null) {
+			campos.put("departamento", autoridad.getDepartamento().toString());
+		}
+		if (autoridad.getCiudad() != null) {
+			campos.put("ciudad", autoridad.getCiudad().toString());
+		}
+		if (!autoridad.getUsuarios().get(0).getIdentificacion().isEmpty()) {
+			campos.put("identificacion", autoridad.getUsuarios().get(0).getIdentificacion());
+		}
+		if (autoridad.getUsuarios().get(0).getTipoIdentificacion() != null) {
+			campos.put("tipoIdentificacion", autoridad.getUsuarios().get(0).getTipoIdentificacion().toString());
+		}
+		if (!autoridad.getUsuarios().get(0).getNombres().isEmpty()) {
+			campos.put("nombres", autoridad.getUsuarios().get(0).getNombres());
+		}
+		if (!autoridad.getUsuarios().get(0).getApellidos().isEmpty()) {
+			campos.put("apellidos", autoridad.getUsuarios().get(0).getApellidos());
+		}
+		if (!autoridad.getUsuarios().get(0).getUsername().isEmpty()) {
+			campos.put("username", autoridad.getUsuarios().get(0).getUsername());
 		}
 		return campos;
 	}
@@ -412,57 +382,25 @@ public class AdminController {
 		return autoridad;
 	}
 
-	public Autoridad create() {
-		faker = new Faker();
-		String idAutoridad = "autoridad" + ThreadLocalRandom.current().nextInt(1, 99999 + 1);
-		TipoAutoridad tipoAutoridad = TipoAutoridad.values()[ThreadLocalRandom.current().nextInt(0,
-				TipoAutoridad.values().length)];
-		Departamento departamento = Departamento.values()[ThreadLocalRandom.current().nextInt(0,
-				Departamento.values().length)];
-		String nombre = faker.name().firstName();
-		String direccion = faker.address().firstName();
-		Ciudad ciudad = Ciudad.values()[ThreadLocalRandom.current().nextInt(0, Ciudad.values().length)];
-		ArrayList<Usuario> usuarios = new ArrayList<>();
-		for (int i = 0; i < 3; i++) {
-			String identificacion = "usuario" + ThreadLocalRandom.current().nextInt(1, 99999 + 1);
-			String username = "username" + ThreadLocalRandom.current().nextInt(1, 99999 + 1);
-			TipoIdentificacion tipoIdentificacion = TipoIdentificacion.values()[ThreadLocalRandom.current().nextInt(0,
-					TipoIdentificacion.values().length)];
+	public ArrayList<Autoridad> jsontoArray(String consulta) throws JSONException {
 
-			String nombres = faker.name().firstName();
-			String apellidos = faker.name().lastName();
-			ArrayList<String> roles = new ArrayList<>();
-			roles.add("ADMIN");
-			Usuario usuario = new Usuario(identificacion, nombres, apellidos, tipoIdentificacion, username, "123",
-					"123", roles, true);
-			usuarios.add(usuario);
+		ArrayList<Autoridad> autoridades = new ArrayList<Autoridad>();
+		String mensaje = EmbargosController.consultaGeneral(consulta);
+		mensaje = "[" + mensaje + "]";
+		System.out.println("Mensaje: " + mensaje);
+		JSONArray myjson = new JSONArray(mensaje);
+		for (int i = 0; i < myjson.length(); i++) {
+			JSONObject jsonRecord = myjson.getJSONObject(i).getJSONObject("Record");
+			autoridades.add(jsontoObject(jsonRecord));
 		}
-		Autoridad autoridad = new Autoridad(idAutoridad, tipoAutoridad, nombre, direccion, ciudad, departamento,
-				usuarios);
-		return autoridad;
-	}
-
-	public Usuario createUsuario() {
-		faker = new Faker();
-		String identificacion = "persona" + ThreadLocalRandom.current().nextInt(1, 99999 + 1);
-		TipoIdentificacion tipoIdentificacion = TipoIdentificacion.values()[ThreadLocalRandom.current().nextInt(0,
-				TipoIdentificacion.values().length)];
-		String nombres = faker.name().firstName();
-		String username = faker.name().username();
-		String apellidos = faker.name().lastName();
-		ArrayList<String> roles = new ArrayList<>();
-		roles.add("ADMIN");
-		boolean habilitado = true;
-		Usuario usuario = new Usuario(identificacion, nombres, apellidos, tipoIdentificacion, username, roles, null,
-				habilitado);
-		// persona.setEstado("INACTIVO");
-		return usuario;
+		return autoridades;
 	}
 
 	private boolean checkAutoridad(Autoridad autoridad) {
 		return !autoridad.getIdAutoridad().isEmpty() && !autoridad.getNombre().isEmpty()
 				&& autoridad.getTipoAutoridad() != null && !autoridad.getDireccion().isEmpty()
-				&& autoridad.getDepartamento() != null && autoridad.getCiudad() != null;
+				&& autoridad.getDepartamento() != null && autoridad.getCiudad() != null
+				&& !autoridad.getUsuarios().isEmpty();
 	}
 
 	private boolean checkUsuario(Usuario usuario) {
@@ -471,22 +409,4 @@ public class AdminController {
 				&& !usuario.getUsername().isEmpty() && !usuario.getPassword().isEmpty()
 				&& !usuario.getConfirmPassword().isEmpty();
 	}
-
-	private boolean checkNullUser(Usuario usuario) {
-		return usuario.getIdentificacion() != null && usuario.getTipoIdentificacion() != null
-				&& usuario.getNombres() != null && usuario.getApellidos() != null && usuario.getUsername() != null
-				&& usuario.getPassword() != null && usuario.getConfirmPassword() != null;
-	}
-	/*
-	 * System.out.println("ID Autoridad: " + autoridad.getIdAutoridad());
-	 * System.out.println("Nombre Autoridad: " + autoridad.getNombre());
-	 * System.out.println("Direccion Autoridad: " + autoridad.getDireccion());
-	 * System.out.println("Ciudad Autoridad: " + autoridad.getCiudad());
-	 * System.out.println("Departamento Autoridad: " + autoridad.getDepartamento());
-	 * for (Usuario usuario : autoridad.getUsuarios()) {
-	 * System.out.println("Id Usuario : " + usuario.getIdentificacion());
-	 * System.out.println("Nombres Usuario : " + usuario.getNombres());
-	 * System.out.println("Apellidos Usuario : " + usuario.getApellidos()); }
-	 * 
-	 */
 }

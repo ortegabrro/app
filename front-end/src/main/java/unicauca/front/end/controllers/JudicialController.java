@@ -117,7 +117,7 @@ public class JudicialController {
 		return "autoridad/judicial/gestor/main";
 	}
 
-	@RequestMapping(value = "/form", method = RequestMethod.POST, params = "action=cargar")
+	@RequestMapping(value = "/gestor/form", method = RequestMethod.POST, params = "action=cargar")
 	public String cargarEmbargo(@RequestParam("file") MultipartFile archivo, Model model, RedirectAttributes flash)
 			throws IOException {
 		boolean band = false;
@@ -236,8 +236,6 @@ public class JudicialController {
 	@RequestMapping(value = "/gestor/form", method = RequestMethod.POST, params = "action=aplicar")
 	public String aplicar(@ModelAttribute(name = "embargo") EmbargoJudicial embargo, Model model,
 			RedirectAttributes flash) {
-		//System.out.println("Monto:"+ embargo.getMontoAEmbargar());
-		//return "redirect:/autoridad/judicial/gestor";
 		try {
 			KieSession sessionStatefull = session.obtenerSesion();
 			sessionStatefull.insert(embargo);

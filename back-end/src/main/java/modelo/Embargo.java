@@ -18,9 +18,8 @@ public class Embargo {
 	private Boolean embargado;
     private ArrayList<Demandado> demandados= new ArrayList<>();
     
-    
 	public Embargo(String idAutoridad, String username, String numProceso, LocalDate fechaOficio,
-			TipoEmbargo tipoEmbargo, String numCuentaAgrario, Boolean embargoProcesado,
+			TipoEmbargo tipoEmbargo, String numCuentaAgrario, Boolean embargoProcesado, Boolean embargado,
 			ArrayList<Demandado> demandados) {
 		super();
 		this.idAutoridad = idAutoridad;
@@ -30,11 +29,13 @@ public class Embargo {
 		this.tipoEmbargo = tipoEmbargo;
 		this.numCuentaAgrario = numCuentaAgrario;
 		this.embargoProcesado = false;
+		this.embargado = false;
 		this.demandados = demandados;
 	}
-	
+
 	public Embargo() {
 		this.embargoProcesado = false;
+		this.embargado = false;
 	}
 	
 	public String getIdAutoridad() {
@@ -83,6 +84,15 @@ public class Embargo {
 	public void setEmbargoProcesado(Boolean embargoProcesado) {
 		this.embargoProcesado = embargoProcesado;
 	}
+	
+	public Boolean getEmbargado() {
+		return embargado;
+	}
+
+	public void setEmbargado(Boolean embargado) {
+		this.embargado = embargado;
+	}
+
 	public ArrayList<Demandado> getDemandados() {
 		return demandados;
 	}

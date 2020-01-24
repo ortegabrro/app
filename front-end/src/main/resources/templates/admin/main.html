@@ -7,7 +7,10 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-	<!--Panel-->
+	<!--Panel
+	
+	<form action="#" th:action="@{/admin/app/form}" method="post">
+	-->
 	<form action="#" th:action="@{'/admin/app/form/'+${consulta}}" method="post">
 		<nav th:replace="admin/navbar :: panel"></nav>
 		<div class="container-fluid" id="css-contenido" th:fragment="main">
@@ -30,8 +33,7 @@
 									onpaste="return false"
 									onkeypress="return /[a-z-0-9]/i.test(event.key)"
 									maxlength="50"
-									class="form-control text-uppercase"
-									autofocus 
+									class="form-control text-uppercase" 
 									/>
 							</th:block>
 							<th:block
@@ -71,7 +73,7 @@
 								name="direccion" th:field="*{autoridad.direccion}"
 								class="form-control text-uppercase"
 								onpaste="return false"
-								onkeypress="return /[a-z-0-9]/i.test(event.key)"
+								onkeypress="return /[a-z-0-9- ]/i.test(event.key)"
 								maxlength="50"
 								/>
 						</div>
@@ -180,14 +182,14 @@
 										<td><input name="nombres" type="text"
 											class="form-control text-uppercase"
 											th:field="*{autoridad.usuarios[__${item.index}__].nombres}" 
-											onkeypress="return /[a-z]/i.test(event.key)"
+											onkeypress="return /[a-z- ]/i.test(event.key)"
 											onpaste="return false"
 											maxlength="50"
 											/></td>
 										<td><input name="apellidos" type="text"
 											class="form-control text-uppercase"
 											th:field="*{autoridad.usuarios[__${item.index}__].apellidos}"
-											onkeypress="return /[a-z]/i.test(event.key)"
+											onkeypress="return /[a-z- ]/i.test(event.key)"
 											onpaste="return false"
 											maxlength="50" 
 											/></td>

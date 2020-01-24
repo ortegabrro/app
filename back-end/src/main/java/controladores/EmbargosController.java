@@ -49,7 +49,20 @@ public class EmbargosController {
 		}
 
 	}
+	
+	public static void editarEmbargo(Embargo embargo) {
 
+		String embargoJson = gson.toJson(embargo);
+		String[] arguments = { embargoJson };
+		Collection<ProposalResponse> responses = Util.createInvoke("editarEmbargo", arguments);
+		for (ProposalResponse res : responses) {
+			Status status = res.getStatus();
+			Logger.getLogger(EmbargosController.class.getName()).log(Level.INFO,
+					"Resultado de creacion de embargo: " + status);
+		}
+
+	}
+	
 	public static void guardarAutoridad(Autoridad autoridad) {
 		try {
 			
@@ -67,6 +80,8 @@ public class EmbargosController {
 			e.printStackTrace();
 		}	
 	}
+	
+
 	
 	public static void editarAutoridad(Autoridad autoridad) {
 		try {

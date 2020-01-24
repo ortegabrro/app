@@ -3,7 +3,10 @@
 <head th:replace="layout:: head"></head>
 <body>
 	<!--<div th:fragment="fg-consultar">
-		Panel-->
+		Panel
+		
+		<form action="#" th:action="@{/admin/app/consulta}" method="post">
+		-->
 
 	<div class="content" th:each="autoridad, item : *{autoridades}">
 		<form action="#" th:action="@{'/admin/app/consulta/'+${consulta}}" method="post">

@@ -11,6 +11,7 @@ public class Usuario extends Persona{
 	private String confirmPassword;
 	private ArrayList<String> roles=new ArrayList<>();
 	private String ownedBy;
+	private String idAutoridad;
 	private boolean habilitado;
 	
 	
@@ -56,8 +57,6 @@ public class Usuario extends Persona{
 		this.password = password;
 	}
 	
-	
-	
 	public String getConfirmPassword() {
 		return confirmPassword;
 	}
@@ -80,6 +79,14 @@ public class Usuario extends Persona{
 
 	public void setOwnedBy(String ownedBy) {
 		this.ownedBy = ownedBy;
+	}
+	
+	public String getIdAutoridad() {
+		return idAutoridad;
+	}
+
+	public void setIdAutoridad(String idAutoridad) {
+		this.idAutoridad = idAutoridad;
 	}
 
 	public boolean isHabilitado() {

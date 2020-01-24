@@ -19,7 +19,7 @@ public class Data {
 				new BigDecimal(33514152));
 		historialJudicial.put(new Fecha(LocalDate.of(2017, 10, 01), LocalDate.of(2018, 9, 30)),
 				new BigDecimal(34878187));
-		historialJudicial.put(new Fecha(LocalDate.of(2018, 10, 01), LocalDate.of(2019, 9, 30)),
+		historialJudicial.put(new Fecha(LocalDate.of(2018, 10, 01), LocalDate.of(2021, 9, 30)),
 				new BigDecimal(36050085));
 
 		this.historialCoactivo = new HashMap<Fecha, BigDecimal>();
@@ -27,11 +27,11 @@ public class Data {
 				new BigDecimal(16000000));
 		historialCoactivo.put(new Fecha(LocalDate.of(2017, 10, 01), LocalDate.of(2018, 9, 30)),
 				new BigDecimal(16248000));
-		historialCoactivo.put(new Fecha(LocalDate.of(2018, 10, 01), LocalDate.of(2019, 9, 30)),
+		historialCoactivo.put(new Fecha(LocalDate.of(2018, 10, 01), LocalDate.of(2021, 9, 30)),
 				new BigDecimal(16910000));
 
 		this.historialSalarioMinimo = new HashMap<Fecha, BigDecimal>();
-		historialSalarioMinimo.put(new Fecha(LocalDate.of(2018, 1, 01), LocalDate.of(2019, 12, 01)),
+		historialSalarioMinimo.put(new Fecha(LocalDate.of(2018, 1, 01), LocalDate.of(2021, 12, 01)),
 				new BigDecimal(781242));
 	}
 

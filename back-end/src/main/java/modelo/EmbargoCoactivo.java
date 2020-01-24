@@ -10,14 +10,11 @@ public class EmbargoCoactivo extends Embargo {
 
 	private String numOficio;
 
-	
-	
-	
 	public EmbargoCoactivo(String idAutoridad, String username, String numProceso, LocalDate fechaOficio,
-			TipoEmbargo tipoEmbargo, String numCuentaAgrario, Boolean embargoProcesado, ArrayList<Demandado> demandados,
-			String numOficio) {
+			TipoEmbargo tipoEmbargo, String numCuentaAgrario, Boolean embargoProcesado, Boolean embargado,
+			ArrayList<Demandado> demandados, String numOficio) {
 		super(idAutoridad, username, numProceso, fechaOficio, tipoEmbargo, numCuentaAgrario, embargoProcesado,
-				demandados);
+				embargado, demandados);
 		this.numOficio = numOficio;
 	}
 

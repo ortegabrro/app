@@ -13,12 +13,12 @@ public class EmbargoJudicial extends Embargo{
 	private ArrayList<Demandante> demandantes= new ArrayList<>();
 	
 	
-
 	public EmbargoJudicial(String idAutoridad, String username, String numProceso, LocalDate fechaOficio,
-			TipoEmbargo tipoEmbargo, String numCuentaAgrario, Boolean embargoProcesado, ArrayList<Demandado> demandados,
-			BigDecimal montoAEmbargar, String numOficio, ArrayList<Demandante> demandantes) {
+			TipoEmbargo tipoEmbargo, String numCuentaAgrario, Boolean embargoProcesado, Boolean embargado,
+			ArrayList<Demandado> demandados, BigDecimal montoAEmbargar, String numOficio,
+			ArrayList<Demandante> demandantes) {
 		super(idAutoridad, username, numProceso, fechaOficio, tipoEmbargo, numCuentaAgrario, embargoProcesado,
-				demandados);
+				embargado, demandados);
 		this.montoAEmbargar = montoAEmbargar;
 		this.numOficio = numOficio;
 		this.demandantes = demandantes;

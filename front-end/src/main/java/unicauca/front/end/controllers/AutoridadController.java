@@ -3,6 +3,7 @@ package unicauca.front.end.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.json.JSONArray;
@@ -23,6 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import controladores.EmbargosController;
 import enumeraciones.Ciudad;
@@ -55,15 +59,14 @@ public class AutoridadController {
 	}
 
 	@RequestMapping(value = "/form/{consulta}", method = RequestMethod.POST, params = "action=crear")
-	public String admin(@ModelAttribute(name = "usuario") Usuario usuario, Model model, RedirectAttributes flash) {
+	public String admin(@ModelAttribute(name = "usuario") Usuario usuario, Model model, RedirectAttributes flash)
+			throws JSONException {
 		authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		if (checkUsuario(usuario)) {
-			if (usuario.getPassword().equals(usuario.getConfirmPassword())) {
-				if (BackEndController.obtenerPersona(usuario.getIdentificacion(),
-						usuario.getTipoIdentificacion().toString()) == null) {
-					if (BackEndController.obtenerUsuario(usuario.getUsername()) == null) {
-						// Buscar en fabric la autoridad por el ownedBy
+			if (BackEndController.obtenerUsuarioByid(usuario.getIdentificacion()) == null) {
+				if (BackEndController.obtenerUsuario(usuario.getUsername()) == null) {
+					if (usuario.getPassword().equals(usuario.getConfirmPassword())) {
 						Usuario usuarioLogin = BackEndController.obtenerUsuario(username);
 						Autoridad autoridad = BackEndController.obtenerAutoridad(usuarioLogin.getOwnedBy());
 						usuario.setOwnedBy(usuarioLogin.getIdentificacion());
@@ -71,18 +74,19 @@ public class AutoridadController {
 						EmbargosController.guardarUsuario(usuario);
 						flash.addFlashAttribute("success", "Usuario creado con exito");
 					} else {
-						flash.addFlashAttribute("error", "No se puede Crear,Nombre de Usuario ya existe");
+						flash.addFlashAttribute("error", "No se puede Crear,Contraseñas no coinciden");
 					}
-				}else {
-					flash.addFlashAttribute("error", "No se puede Crear,Identificacion ya existe");
+				} else {
+					flash.addFlashAttribute("error", "No se puede Crear,Nombre de Usuario ya existe");
+					usuario.setUsername(null);
 				}
 			} else {
-				flash.addFlashAttribute("error", "No se puede Crear,Contraseñas no coinciden");
+				flash.addFlashAttribute("error", "No se puede Crear,Identificacion ya existe");
+				usuario.setIdentificacion(null);
 			}
 		} else {
 			flash.addFlashAttribute("error", "No se puede Crear ,Por favor llenar el formulario");
 		}
-
 		flash.addFlashAttribute("boton", "all");
 		flash.addFlashAttribute("usuario", usuario);
 		return "redirect:/admin/autoridad/crear";
@@ -99,39 +103,65 @@ public class AutoridadController {
 	@RequestMapping(value = "/form/{consulta}", method = RequestMethod.POST, params = "action=consultar")
 	public String consultar(@ModelAttribute(name = "usuario") Usuario usuario, Model model, RedirectAttributes flash)
 			throws JSONException {
+		//{"selector":{"roles": { "$elemMatch": { "$eq": "Gestor" } }}}
 		Consulta selector = new Consulta();
 		if (!consulta(usuario).isEmpty()) {
 			selector.setSelector(consulta(usuario));
 			Gson gson = new Gson();
 			String consulta = gson.toJson(selector);
-			System.out.println("Consulta: " + consulta);
 			ArrayList<Usuario> usuarios = jsontoArray(consulta);
 			if (!usuarios.isEmpty()) {
-				for (Usuario usuario2 : usuarios) {
-					System.out.println("Propiedad de: " + usuario2.getOwnedBy());
-					System.out.println("Roles: " + usuario2.getRoles());
-				}
 				model.addAttribute("titulo", "Consulta");
 				model.addAttribute("form", "Consultas");
 				model.addAttribute("usuarios", usuarios);
+				model.addAttribute("consulta", consulta);
 				boton = "actualizar";
 				model.addAttribute("boton", boton);
 				return "autoridad/admin/consulta";
 			} else {
-				flash.addFlashAttribute("warning", "No se encontraron Usuarios");
+				flash.addFlashAttribute("warning", "No se encontraron resultados");
 				return "redirect:/admin/autoridad/main";
 			}
-
 		} else {
 			flash.addFlashAttribute("warning", "No se puede Consultar, Por favor ingresar el campo a consultar");
 			return "redirect:/admin/autoridad/main";
 		}
 	}
-
+	
+	public String buildSelector(Usuario usuario) {
+		
+		authentication = SecurityContextHolder.getContext().getAuthentication();
+		String usernamenew = authentication.getName();
+		Usuario usuarioLogin = BackEndController.obtenerUsuario(usernamenew);
+		String selectors="";
+		
+		if (!usuario.getIdentificacion().isEmpty()) {
+			selectors="\"identificacion\":\""+usuario.getIdentificacion()+"\"";
+		}
+		if (usuario.getTipoIdentificacion() != null) {
+			selectors+=","+"\"tipoIdentificacion\":\""+usuario.getTipoIdentificacion().toString()+"\"";
+		}
+		if (!usuario.getNombres().isEmpty()) {
+			selectors+=","+"\"nombres\":\""+usuario.getNombres()+"\"";
+		}
+		if (!usuario.getApellidos().isEmpty()) {
+			selectors+=","+"\"apellidos\":\""+usuario.getApellidos()+"\"";
+		}
+		if (!usuario.getUsername().isEmpty()) {
+			selectors+=","+"\"username\":\""+usuario.getUsername()+"\"";
+		}
+		if (!usuario.getRoles().isEmpty()) {
+			selectors+=","+"\"roles\":{"+"\"$elemMatch\":{"+"\"$eq\":\""+usuario.getRoles().get(0)+"\"}}";
+		}
+		if(!selectors.isEmpty()) {
+			selectors+=","+"\"ownedBy\":\""+usuarioLogin.getIdentificacion()+"\"";
+		}
+		return selectors;
+	}
+	
 	@RequestMapping(value = "/form/{consulta}", method = RequestMethod.POST, params = "action=actualizar")
 	public String actualizar(@ModelAttribute(name = "usuario") Usuario usuario, Model model,
 			@PathVariable(value = "consulta") String consulta) {
-
 		Usuario usuarionew = BackEndController.obtenerUsuario(usuario.getUsername());
 		model.addAttribute("titulo", "Consulta");
 		model.addAttribute("form", "Consultas");
@@ -145,66 +175,67 @@ public class AutoridadController {
 	@RequestMapping(value = "/form/{consulta}", method = RequestMethod.POST, params = "action=onactualizar")
 	public String onactualizar(@ModelAttribute(name = "usuario") Usuario usuario, Model model, RedirectAttributes flash,
 			@PathVariable(value = "consulta") String consulta) {
+		boolean band = false;
 		if (checkUsuario(usuario)) {
-			Usuario userfind = BackEndController.obtenerUsuario(usuario.getUsername());
-			updateUser(userfind, usuario);
-			flash.addFlashAttribute("success", "Usuario actualizado con exito");
-			flash.addFlashAttribute("boton", "actualizar");
-			flash.addFlashAttribute("consulta", consulta);
-			return "redirect:/admin/autoridad/consulta";
+			if (usuario.getPassword().equals(usuario.getConfirmPassword())) {				
+				Usuario userfind = BackEndController.obtenerUsuario(usuario.getUsername());
+				updateUser(userfind, usuario);
+				band = true;
+			}else {
+				flash.addFlashAttribute("error",
+						"No se puede Actualizar Autoridad,Contraseñas de Usuario no coinciden");
+				band = false;
+			}
 		} else {
 			flash.addFlashAttribute("error", "No se puede Actualizar Usuario,Por favor llenar el formulario");
+			band = false;
+		}
+		if (band == true) {
+			flash.addFlashAttribute("success", "Usuario actualizado con exito");
+			flash.addFlashAttribute("boton", "actualizar");
+			flash.addFlashAttribute("consulta", consulta);	
+			return "redirect:/admin/autoridad/consulta";
+		} else {
 			flash.addFlashAttribute("usuario", usuario);
-			return "redirect:/admin/app/actualizar";
+			return "redirect:/admin/autoridad/actualizar";
 		}
 	}
 
 	@GetMapping("/consulta")
 	public String loadConsulta(@ModelAttribute(name = "consulta") String consulta, Model model) throws JSONException {
-
-		return "autoridad/admin/consulta";
-	}
-
-	@RequestMapping(value = "/form", method = RequestMethod.POST, params = "action=habilitar")
-	public String habilitar(@ModelAttribute(name = "usuario") Usuario usuario, Model model, RedirectAttributes flash) {
-		System.out.println("id Usuario:" + usuario.getIdentificacion());
-		System.out.println("Habilitado:" + usuario.isHabilitado());
-		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
-		usuario.setHabilitado(true);
-		for (int i = 0; i < 3; i++) {
-			usuarios.add(usuario);
-		}
+		
+		ArrayList<Usuario> usuarios = jsontoArray(consulta);
 		model.addAttribute("titulo", "Consulta");
 		model.addAttribute("form", "Consultas");
 		model.addAttribute("usuarios", usuarios);
-		model.addAttribute("boton", "actualizar");
+		model.addAttribute("consulta", consulta);
 		return "autoridad/admin/consulta";
 	}
-
-	@RequestMapping(value = "/form", method = RequestMethod.POST, params = "action=deshabilitar")
-	public String deshabilitar(@ModelAttribute(name = "usuario") Usuario usuario, Model model,
-			RedirectAttributes flash) {
-		System.out.println("id Usuario:" + usuario.getIdentificacion());
-		System.out.println("Habilitado:" + usuario.isHabilitado());
-		usuario.setHabilitado(false);
-		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
-		for (int i = 0; i < 3; i++) {
-			usuarios.add(usuario);
-		}
-		model.addAttribute("titulo", "Consulta");
-		model.addAttribute("form", "Consultas");
-		model.addAttribute("usuarios", usuarios);
-		model.addAttribute("boton", "actualizar");
-		return "autoridad/admin/consulta";
+	
+	@GetMapping("/actualizar")
+	public String loadActualizar(Model model) {
+		model.addAttribute("lst", lst);
+		model.addAttribute("titulo", "Actualizar");
+		model.addAttribute("form", "Formulario");
+		model.addAttribute("boton", "onactualizar");
+		return "autoridad/admin/main";
 	}
-
+	
 	public void updateUser(Usuario userfind, Usuario usuario) {
 		userfind.setTipoIdentificacion(usuario.getTipoIdentificacion());
 		userfind.setNombres(usuario.getNombres());
 		userfind.setApellidos(usuario.getApellidos());
 		userfind.setPassword(usuario.getPassword());
 		userfind.setConfirmPassword(usuario.getPassword());
+		userfind.getRoles().set(0, usuario.getRoles().get(0));
+		userfind.setHabilitado(usuario.isHabilitado());
 		EmbargosController.editarUsuario(userfind);
+		try {
+			Thread.sleep(2500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public HashMap<String, String> consulta(Usuario usuario) {
@@ -212,8 +243,7 @@ public class AutoridadController {
 		authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		Usuario usuarioLogin = BackEndController.obtenerUsuario(username);
-		// System.out.println("Propiedad de: "+usuarioLogin.getOwnedBy());
-		campos.put("ownedBy", usuarioLogin.getIdentificacion());
+		
 		if (!usuario.getIdentificacion().isEmpty()) {
 			campos.put("identificacion", usuario.getIdentificacion());
 		}
@@ -229,9 +259,11 @@ public class AutoridadController {
 		if (!usuario.getUsername().isEmpty()) {
 			campos.put("username", usuario.getUsername());
 		}
-		// if (!usuario.getRoles().isEmpty()) {
-		// campos.put("roles", usuario.getRoles().get(0));
-		// }
+	
+		if(!campos.isEmpty()) {
+			campos.put("ownedBy", usuarioLogin.getIdentificacion());
+		}
+		
 		return campos;
 	}
 
@@ -269,11 +301,10 @@ public class AutoridadController {
 	}
 
 	public ArrayList<Usuario> jsontoArray(String consulta) throws JSONException {
-
+		String consultanew = consulta;
 		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
-		String mensaje = EmbargosController.consultaGeneral(consulta);
+		String mensaje = EmbargosController.consultaGeneral(consultanew);
 		mensaje = "[" + mensaje + "]";
-		System.out.println("Mensaje: " + mensaje);
 		JSONArray myjson = new JSONArray(mensaje);
 		for (int i = 0; i < myjson.length(); i++) {
 			JSONObject jsonRecord = myjson.getJSONObject(i).getJSONObject("Record");

@@ -31,7 +31,7 @@ public class Pasarela {
 			SubtipoCuenta subTipoCuenta= SubtipoCuenta.values()[ThreadLocalRandom.current().nextInt(0, SubtipoCuenta.values().length)];
 			LocalDate fechaCreacion = LocalDate.ofEpochDay(randomDay);
 			BigDecimal saldoCuentaFecha = min.add(new BigDecimal(Math.random()).multiply(max.subtract(min))).setScale(2,BigDecimal.ROUND_HALF_UP);
-			EstadoCuenta estado= EstadoCuenta.values()[ThreadLocalRandom.current().nextInt(0, EstadoCuenta.values().length)];
+			EstadoCuenta estado= EstadoCuenta.ACTIVA;
 			
 			cuentas.add(new Cuenta(idCuenta, idBanco, tipoCuenta, subTipoCuenta, fechaCreacion, saldoCuentaFecha, estado));
 		}

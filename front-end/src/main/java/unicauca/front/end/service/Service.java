@@ -43,12 +43,13 @@ public class Service {
 					System.out.println("La cuenta:" + cuenta.getIdCuenta() + " de:" + cuenta.getTipoCuenta() + " de "
 							+ cuenta.getSubTipoCuenta());
 					System.out.println("Con saldo a la fecha de:" + cuenta.getSaldoCuentaFecha());
-					System.out.println("No se puede embargar");
+					
 					System.out.println("Estado de la cuenta: " + cuenta.getEstado());
 					if (cuenta.getSaldoCuentaFecha().compareTo(new BigDecimal(0)) == 0) {
 						System.out.println("Saldo insuficiente");
 					}
-					System.out.println("  en base a las siguientes leyes:");
+					System.out.println("en base a las siguientes leyes:");
+					System.out.println("Segun la ley Colombiana, este tipo de cuentas son inembargables ");
 				}
 				for (String regla : cuenta.getReglas()) {
 					System.out.println("\t" + regla);

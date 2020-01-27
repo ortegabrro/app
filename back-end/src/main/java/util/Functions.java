@@ -153,13 +153,13 @@ public class Functions {
 	
 	public static void agregarLeyes(ArrayList<Cuenta> cuentas) {
     	for(Cuenta o:cuentas){
-    		o.getReglas().add("Artículo 25 ley 1751 de 2015 ");
-	    	o.getReglas().add("Decreto 780 de 2016 ARTÍCULO 2.6.4.1.4 ");
-	    	o.getReglas().add("Numeral 1 Artículo 594 código general del proceso Ley 1564 de 2012 ");
-	    	o.getReglas().add("Numeral 4 Artículo 594 código general del proceso Ley 1564 de 2012 ");
-	    	o.getReglas().add("Numeral 5 Artículo 594 código general del proceso Ley 1564 de 2012 ");
-	    	o.getReglas().add("Artículo 91 de la Ley 715 de 2001");
-	    	o.getReglas().add("Artículo 8 Decreto 050 de 2003");
+    		o.getReglas().add("Articulo 25 ley 1751 de 2015 ");
+	    	o.getReglas().add("Decreto 780 de 2016 ARTICULO 2.6.4.1.4 ");
+	    	o.getReglas().add("Numeral 1 Articulo 594 codigo general del proceso Ley 1564 de 2012 ");
+	    	o.getReglas().add("Numeral 4 Articulo 594 codigo general del proceso Ley 1564 de 2012 ");
+	    	o.getReglas().add("Numeral 5 Articulo 594 codigo general del proceso Ley 1564 de 2012 ");
+	    	o.getReglas().add("Articulo 91 de la Ley 715 de 2001");
+	    	o.getReglas().add("Articulo 8 Decreto 050 de 2003");
     	}  
 	}
 

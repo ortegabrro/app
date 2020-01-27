@@ -8,7 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +40,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 import controladores.EmbargosController;
 import enumeraciones.Ciudad;
 import enumeraciones.Departamento;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.collectingAndThen;
 
 import modelo.Autoridad;
 
@@ -58,24 +66,14 @@ public class ClienteController {
 
 		ArrayList<Embargo> embargos = jsontoEmbargos(consulta);
 		ArrayList<Autoridad> autoridades = new ArrayList<Autoridad>();
-		// if ( autoridad != null) {
-		// for (Autoridad autoridad2 : autoridades) {
-		// if(!autoridad2.getIdAutoridad().equals(autoridad.getIdAutoridad())) {
-
+		
 		for (Embargo embargo : embargos) {
 			Autoridad autoridad = BackEndController.obtenerAutoridad(embargo.getIdAutoridad());
-			if (autoridad != null) {
-				if (!autoridades.isEmpty()) {
-					for (Autoridad autoridad2 : autoridades) {
-						if (!autoridad2.getIdAutoridad().equals(autoridad.getIdAutoridad())) {
-							autoridades.add(autoridad);
-						}
-					}
-				} else {
-					autoridades.add(autoridad);
-				}
-			}
+			autoridades.add(autoridad);
 		}
+		HashSet<Object> seen=new HashSet<>();
+		autoridades.removeIf(e->!seen.add(e.getIdAutoridad()));
+	                
 
 		if (!embargos.isEmpty() && !autoridades.isEmpty()) {
 			flash.addFlashAttribute("embargos", embargos);

@@ -1,5 +1,9 @@
 package model
 
+import (
+	"embargos/utils"
+)
+
 // Reprensenta un Demandado en la blockchain, utilizada para la deserializacion y serializacion
 // de un demandado en formato JSON
 type Demandado struct {
